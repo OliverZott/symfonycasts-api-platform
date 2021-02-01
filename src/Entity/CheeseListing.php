@@ -17,32 +17,32 @@ class CheeseListing
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $title;
+    private ?string $title;
 
     /**
      * @ORM\Column(type="text")
      */
-    private $description;
+    private ?string $description;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $price;
+    private ?int $price;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $createdAt;
+    private ?\DateTimeInterface $createdAt;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $isPublished;
+    private ?bool $isPublished;
 
     public function getId(): ?int
     {
