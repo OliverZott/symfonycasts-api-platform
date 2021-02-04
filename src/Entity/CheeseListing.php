@@ -6,15 +6,18 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CheeseListingRepository;
 use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
- *     collectionOperations={"get", "post"},
- *     itemOperations={
- *     "get"={"path"="/getMyCheese"},
- *     "put"
+ *     collectionOperations={
+ *     "get"={"path"="/getcheeses"},
+ *     "post"
  * },
- *     shortName="cheeses"
+ *     itemOperations={"get", "put"},
+ *
+ *     normalizationContext={"groups"={"cheese_listing:read"}},
+ *     denormalizationContext={"groups"={"cheese_listing:write"}}
  * )
  * @ORM\Entity(repositoryClass=CheeseListingRepository::class)
  */
@@ -29,17 +32,22 @@ class CheeseListing
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"cheese_listing:read"})
+     * @Groups({"cheese_listing:write"})
      */
     private ?string $title;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"cheese_listing:read"})
      */
     private ?string $description;
 
     /**
      * Price in cents
      * @ORM\Column(type="integer")
+     * @Groups({"cheese_listing:read"})
+     * @Groups({"cheese_listing:write"})
      */
     private ?int $price;
 
@@ -51,7 +59,7 @@ class CheeseListing
     /**
      * @ORM\Column(type="boolean")
      */
-    private ?bool $isPublished;
+    private ?bool $isPublished = false;
 
     public function __construct()
     {
@@ -81,6 +89,19 @@ class CheeseListing
         return $this->description;
     }
 
+    /**
+     * @param string|null $description
+     */
+    public function setDescription(?string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @Groups({"cheese_listing:write"})
+     * @param string $description
+     * @return CheeseListing
+     */
     public function setTextDescription(string $description): self
     {
         $this->description = nl2br($description);
@@ -105,6 +126,10 @@ class CheeseListing
         return $this->createdAt;
     }
 
+    /**
+     * @Groups({"cheese_listing:read"})
+     * @return string
+     */
     public function getCreatedAtAgo(): string
     {
         return Carbon::instance($this->getCreatedAt())->diffForHumans();
