@@ -5,7 +5,9 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use App\Repository\CheeseListingRepository;
 use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
@@ -15,17 +17,27 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 /**
  * @ApiResource(
  *     collectionOperations={
- *     "get"={"path"="/getcheeses"},
+ *     "get"={},
  *     "post"
  * },
- *     itemOperations={"get", "put"},
+ *     itemOperations={
+ *     "get",
+ *     "put"
+ * },
  *
  *     normalizationContext={"groups"={"cheese_listing:read"}},
- *     denormalizationContext={"groups"={"cheese_listing:write"}}
+ *     denormalizationContext={"groups"={"cheese_listing:write"}},
+ *     shortName="cheeses",
+ *     attributes={
+ *          "pagination_items_per_page"=3
+ *     }
+ *
  * )
  * @ORM\Entity(repositoryClass=CheeseListingRepository::class)
  * @ApiFilter(BooleanFilter::class, properties={"isPublished"})
  * @ApiFilter(SearchFilter::class, properties={"title": "partial", "description": "partial"})
+ * @ApiFilter(RangeFilter::class, properties={"price"})
+ * @ApiFilter(PropertyFilter::class)
  */
 class CheeseListing
 {
@@ -97,6 +109,22 @@ class CheeseListing
     public function setDescription(?string $description): void
     {
         $this->description = $description;
+    }
+
+    /**
+     * @return string|null
+     *
+     * @Groups({"cheese_listing:read"})
+     *
+     * @noinspection PhpPureAttributeCanBeAddedInspection
+     */
+    public function getShortDescription(): ?string
+    {
+        if (strlen($this->description) < 10) {
+            return $this->description;
+        }
+
+        return substr($this->description, 0, 10) . '...';
     }
 
     /**
