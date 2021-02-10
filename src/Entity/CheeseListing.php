@@ -29,7 +29,8 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *     denormalizationContext={"groups"={"cheese_listing:write"}},
  *     shortName="cheeses",
  *     attributes={
- *          "pagination_items_per_page"=3
+ *          "pagination_items_per_page"=3,
+ *          "formats"={"jsonld", "json", "jsonhal", "csv"={"text/csv"}}
  *     }
  *
  * )
