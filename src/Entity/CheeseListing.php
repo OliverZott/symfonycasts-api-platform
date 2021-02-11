@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
@@ -22,7 +23,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  * },
  *     itemOperations={
  *     "get",
- *     "put"
+ *     "put"={"validation_groups"={"Default", "put_validation"}}
  * },
  *
  *     normalizationContext={"groups"={"cheese_listing:read"}},
@@ -51,14 +52,29 @@ class CheeseListing
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
      * @Groups({"cheese_listing:read"})
      * @Groups({"cheese_listing:write"})
+     *
+     * @Assert\NotBlank()
+     * @Assert\Length(
+     *     min=5,
+     *     max=30,
+     *     minMessage="Minimum 5 chars.",
+     *     groups={"put_validation"}
+     * )
      */
     private ?string $title;
 
     /**
      * @ORM\Column(type="text")
      * @Groups({"cheese_listing:read"})
+     *
+     * @Assert\Length(
+     *     min=5,
+     *     max=30,
+     *     minMessage="Minimum 5 chars."
+     * )
      */
     private ?string $description;
 
@@ -67,6 +83,8 @@ class CheeseListing
      * @ORM\Column(type="integer")
      * @Groups({"cheese_listing:read"})
      * @Groups({"cheese_listing:write"})
+     *
+     * @Assert\NotBlank()
      */
     private ?int $price;
 
