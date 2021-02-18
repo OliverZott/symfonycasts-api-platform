@@ -5,7 +5,6 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-#use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -55,13 +54,14 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Groups({"user:read", "user:write"})
+     * @Groups({"user:read", "user:write", "cheese_listing:item:get"})
      * @Assert\NotBlank()
      */
     private string $username;
 
     /**
      * @ORM\OneToMany(targetEntity=CheeseListing::class, mappedBy="owner")
+     * @Groups({"user:read"})
      */
     private Collection $cheeseListings;
 

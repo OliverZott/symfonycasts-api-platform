@@ -22,7 +22,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "post"
  * },
  *     itemOperations={
- *     "get",
+ *     "get"={
+ *          "normalization_context"={"groups"={"cheese_listing:read", "cheese_listing:item:get"}}
+ *     },
  *     "put"={"validation_groups"={"Default", "put_validation"}}
  * },
  *
@@ -53,7 +55,7 @@ class CheeseListing
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"cheese_listing:read", "cheese_listing:write"})
+     * @Groups({"cheese_listing:read", "cheese_listing:write", "user:read"})
      * @Assert\NotBlank()
      * @Assert\Length(
      *     min=5,
@@ -66,7 +68,7 @@ class CheeseListing
 
     /**
      * @ORM\Column(type="text")
-     * @Groups({"cheese_listing:read"})
+     * @Groups({"cheese_listing:read", "user:read"})
      * @Assert\Length(
      *     min=5,
      *     max=30,
