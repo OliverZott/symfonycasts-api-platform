@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *     collectionOperations={
  *     "get"={},
- *     "post"
+ *     "post"={"validation_groups"={"Default", "post_validation"}}
  * },
  *     itemOperations={
  *     "get"={
@@ -61,7 +61,7 @@ class CheeseListing
      *     min=5,
      *     max=30,
      *     minMessage="Minimum 5 chars.",
-     *     groups={"put_validation"}
+     *     groups={"post_validation"}
      * )
      */
     private ?string $title;
@@ -69,11 +69,6 @@ class CheeseListing
     /**
      * @ORM\Column(type="text")
      * @Groups({"cheese_listing:read", "user:read"})
-     * @Assert\Length(
-     *     min=5,
-     *     max=30,
-     *     minMessage="Minimum 5 chars."
-     * )
      */
     private ?string $description;
 
@@ -100,6 +95,7 @@ class CheeseListing
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="cheeseListings")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"cheese_listing:read", "cheese_listing:write"})
+     * @Assert\Valid()
      */
     private ?User $owner;
 
